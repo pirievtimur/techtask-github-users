@@ -36,6 +36,8 @@ extension APIService: GitHubUsersAPI {
             }
             
             return users
-        }
+        }.do(onCompleted: {
+            
+        })
     }
 }

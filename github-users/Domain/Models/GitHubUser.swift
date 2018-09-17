@@ -6,21 +6,24 @@ struct GitHubUser {
     var avatarURLString: String?
     var profileHtmlURLString: String?
     var followersURLString: String?
-    
-    var avatarURL: URL? {
+}
+
+extension GitHubUser: UserInfoPresentable {
+
+    var userImageURL: URL? {
         guard let urlString = avatarURLString else { return nil }
         return URL(string: urlString)
     }
     
-    var profileHtmlURL: URL? {
+    var username: String {
+        return login
+    }
+    
+    var profileURL: URL? {
         guard let urlString = profileHtmlURLString else { return nil }
         return URL(string: urlString)
     }
     
-    var followersURL: URL? {
-        guard let urlString = followersURLString else { return nil }
-        return URL(string: urlString)
-    }
 }
 
 extension GitHubUser: Mappable {
