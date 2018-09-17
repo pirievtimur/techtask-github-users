@@ -15,7 +15,7 @@ class UsersListViewController: UIViewController {
     
     let disposeBag = DisposeBag()
     
-    private let viewModel: UsersListViewModel
+    private let viewModel: UserListViewModelProtocol
     
     private lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero)
@@ -28,7 +28,7 @@ class UsersListViewController: UIViewController {
     
     private let refreshControl = UIRefreshControl()
     
-    init(viewModel: UsersListViewModel) {
+    init(viewModel: UserListViewModelProtocol) {
         self.viewModel = viewModel
         
         super.init(nibName: nil, bundle: nil)
@@ -47,7 +47,11 @@ class UsersListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        title = "Users"
+        title = viewModel.title
+        navigationItem.backBarButtonItem = UIBarButtonItem(title: nil,
+                                                           style: .plain,
+                                                           target: nil,
+                                                           action: nil)
         
         setupSubviews()
         bindInput()
@@ -77,9 +81,9 @@ class UsersListViewController: UIViewController {
         
         let didTap = tableView.rx.itemSelected.asDriver()
         
-        viewModel.bind(input: UsersListViewModel.Input(loadUsers: load,
-                                                       loadNextUsers: loadNext,
-                                                       userTap: didTap))
+        viewModel.bind(input: UsersListInput(load: load,
+                                             loadNext: loadNext,
+                                             userTap: didTap))
     }
 
     private func bindOutput() {

@@ -1,20 +1,36 @@
 import RxSwift
 import RxCocoa
 
-class UsersListViewModel {
+protocol UsersListInputProtocol {
+    var load: Driver<Void> { get set }
+    var loadNext: Driver<Void> { get set }
+    var userTap: Driver<IndexPath> { get set }
+}
+
+protocol UsersListOutputProtocol {
+    var users: Driver<[GitHubUser]> { get }
+    var executing: Driver<Bool> { get }
+}
+
+struct UsersListInput: UsersListInputProtocol {
+    var load: Driver<Void>
+    var loadNext: Driver<Void>
+    var userTap: Driver<IndexPath>
+}
+
+struct UsersListOutput: UsersListOutputProtocol {
+    var users: Driver<[GitHubUser]>
+    var executing: Driver<Bool>
+}
+
+protocol UserListViewModelProtocol {
+    var title: String { get }
+    func bind(input: UsersListInputProtocol)
+    func output() -> UsersListOutputProtocol
+}
+
+class UsersListViewModel: BaseViewModel, UserListViewModelProtocol {
     
-    struct Input {
-        var loadUsers: Driver<Void>
-        var loadNextUsers: Driver<Void>
-        var userTap: Driver<IndexPath>
-    }
-    
-    struct Output {
-        var users: Driver<[GitHubUser]>
-        var executing: Driver<Bool>
-    }
-    
-    private let disposeBag = DisposeBag()
     private let usersRelay = PublishRelay<[GitHubUser]>()
     private let executingRelay = BehaviorRelay<Bool>(value: false)
     private var users: [GitHubUser] = []
@@ -28,16 +44,22 @@ class UsersListViewModel {
         self.router = router
     }
     
-    func bind(input: Input) {
+    // MARK: - UserListViewModelProtocol
+    
+    var title: String {
+        return "Users list"
+    }
+    
+    func bind(input: UsersListInputProtocol) {
         input
-            .loadUsers
+            .load
             .asObservable()
             .flatMapLatest { [weak self] _ in self?.load() ?? .empty() }
             .bind(to: usersRelay)
             .disposed(by: disposeBag)
         
        input
-            .loadNextUsers
+            .loadNext
             .asObservable()
             .flatMapLatest { [weak self] _ in self?.loadNext() ?? .empty() }
             .map { [weak self] in self?.users ?? [] + $0 }
@@ -49,12 +71,12 @@ class UsersListViewModel {
                 let userModel = self?.users[indexPath.row] else { return }
             
             router.showFollowers(user: userModel)
-        }
+        }.disposed(by: disposeBag)
     }
     
-    func output() -> Output {
-        return .init(users: usersRelay.asDriver(onErrorJustReturn: []),
-                     executing: executingRelay.asDriver())
+    func output() -> UsersListOutputProtocol {
+        return UsersListOutput.init(users: usersRelay.asDriver(onErrorJustReturn: []),
+                                   executing: executingRelay.asDriver())
     }
     
     private func load() -> Observable<[GitHubUser]> {

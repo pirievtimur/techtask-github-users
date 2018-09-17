@@ -14,6 +14,10 @@ class UserListRouter: UserListRouterProtocol {
     }
     
     func showFollowers(user: GitHubUser) {
-        // TO DO open user followers
+        let viewModel = FollowersViewModel(followersAPI: APIService(),
+                                           user: user,
+                                           router: self)
+        let viewController = UsersListViewController(viewModel: viewModel)
+        navigationController.pushViewController(viewController, animated: true)
     }
 }
