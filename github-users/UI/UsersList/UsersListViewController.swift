@@ -9,17 +9,45 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import SnapKit
 
 class UsersListViewController: UIViewController {
-
-    private let viewModel = UsersListViewModel(apiService: APIService())
-    private let disposeBag = DisposeBag()
     
-    @IBOutlet weak var tableView: UITableView!
+    let disposeBag = DisposeBag()
+    
+    private let viewModel: UsersListViewModel
+    
+    private lazy var tableView: UITableView = {
+        let tableView = UITableView(frame: .zero)
+        tableView.addSubview(refreshControl)
+        tableView.register(UINib(nibName: UserCell.identifier, bundle: nil),
+                           forCellReuseIdentifier: UserCell.identifier)
+        
+        return tableView
+    }()
+    
     private let refreshControl = UIRefreshControl()
+    
+    init(viewModel: UsersListViewModel) {
+        self.viewModel = viewModel
+        
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func loadView() {
+        super.loadView()
+        
+        view.backgroundColor = .white
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        title = "Users"
         
         setupSubviews()
         bindInput()
@@ -27,9 +55,12 @@ class UsersListViewController: UIViewController {
     }
     
     private func setupSubviews() {
-        tableView.addSubview(refreshControl)
-        tableView.register(UINib(nibName: UserCell.identifier, bundle: nil),
-                           forCellReuseIdentifier: UserCell.identifier)
+        view.addSubview(tableView)
+        tableView.snp.makeConstraints {
+            $0.top.equalTo(view.snp.top)
+            $0.bottom.equalTo(view.snp.bottom)
+            $0.leading.trailing.equalToSuperview()
+        }
     }
     
     private func bindInput() {

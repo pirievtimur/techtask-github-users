@@ -20,9 +20,11 @@ class UsersListViewModel {
     private var loadMore: Bool = true
     
     private let apiService: GitHubUsersAPI
+    private let router: UserListRouterProtocol
     
-    init(apiService: GitHubUsersAPI) {
+    init(apiService: GitHubUsersAPI, router: UserListRouterProtocol) {
         self.apiService = apiService
+        self.router = router
     }
     
     func bind(input: Input) {
