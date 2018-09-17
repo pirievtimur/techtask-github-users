@@ -6,6 +6,7 @@ class UsersListViewModel {
     struct Input {
         var loadUsers: Driver<Void>
         var loadNextUsers: Driver<Void>
+        var userTap: Driver<IndexPath>
     }
     
     struct Output {
@@ -42,6 +43,13 @@ class UsersListViewModel {
             .map { [weak self] in self?.users ?? [] + $0 }
             .bind(to: usersRelay)
             .disposed(by: disposeBag)
+        
+        input.userTap.asObservable().bind { [weak self] indexPath in
+            guard let router = self?.router,
+                let userModel = self?.users[indexPath.row] else { return }
+            
+            router.showFollowers(user: userModel)
+        }
     }
     
     func output() -> Output {

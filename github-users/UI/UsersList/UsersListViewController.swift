@@ -75,8 +75,11 @@ class UsersListViewController: UIViewController {
             .map { _ in }
             .asDriver(onErrorJustReturn: ())
         
+        let didTap = tableView.rx.itemSelected.asDriver()
+        
         viewModel.bind(input: UsersListViewModel.Input(loadUsers: load,
-                                                       loadNextUsers: loadNext))
+                                                       loadNextUsers: loadNext,
+                                                       userTap: didTap))
     }
 
     private func bindOutput() {

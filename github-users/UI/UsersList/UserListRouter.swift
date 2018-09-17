@@ -14,6 +14,6 @@ class UserListRouter: UserListRouterProtocol {
     }
     
     func showFollowers(user: GitHubUser) {
-        
+        // TO DO open user followers
     }
 }
