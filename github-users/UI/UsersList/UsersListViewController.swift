@@ -41,9 +41,7 @@ class UsersListViewController: UIViewController {
                 guard let weakSelf = self else { return false }
                 return weakSelf.nearBottomEdge(contentOffset: offset, weakSelf.tableView)
             }
-            .map { _ in
-                
-            }
+            .map { _ in }
             .asDriver(onErrorJustReturn: ())
         
         viewModel.bind(input: UsersListViewModel.Input(loadUsers: load,

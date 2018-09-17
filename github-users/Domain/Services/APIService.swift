@@ -20,7 +20,7 @@ extension APIService: GitHubUsersAPI {
     }
     
     func users(perPage: UInt, since: UInt?) -> Observable<[GitHubUser]> {
-        assert(perPage != 0, "perPage parameter cant be nil")
+        assert(perPage != 0, "perPage parameter cant be 0")
         guard var urlComponents = URLComponents(string: usersURLString) else { return .empty() }
         var queryItems: [URLQueryItem] = [URLQueryItem(name: "per_page", value: String(perPage))]
         if let since = since {
@@ -36,8 +36,6 @@ extension APIService: GitHubUsersAPI {
             }
             
             return users
-        }.do(onCompleted: {
-            
-        })
+        }
     }
 }
