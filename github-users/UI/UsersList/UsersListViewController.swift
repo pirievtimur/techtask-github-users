@@ -18,7 +18,7 @@ class UsersListViewController: UIViewController {
     private let viewModel: UserListViewModelProtocol
     
     private lazy var tableView: UITableView = {
-        let tableView = UITableView(frame: .zero)
+        let tableView = UITableView(frame: .zero, style: .grouped)
         tableView.addSubview(refreshControl)
         tableView.register(UINib(nibName: UserCell.identifier, bundle: nil),
                            forCellReuseIdentifier: UserCell.identifier)
