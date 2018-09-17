@@ -7,12 +7,18 @@
 //
 
 import UIKit
+import RxSwift
 
 class ViewController: UIViewController {
 
+    private let disposeBag = DisposeBag()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        
+        APIService().users(perPage: 100, since: nil).bind {
+            print($0)
+        }.disposed(by: disposeBag)
     }
 
     override func didReceiveMemoryWarning() {
